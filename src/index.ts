@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 
-import { pool } from './db';
+const database = require('./config/db')
 
 const app: Application = express();
 
@@ -10,52 +10,40 @@ app.use(express.urlencoded({
 
 app.use(express.json());
 
-app.get('/city/:id', (req: Request, res: Response) => {
+app.get('/get_cities', (req: Request, res: Response) => {
 
-    pool.getConnection((err: any, conn: any) => {
+    var sqlQuery = "SELECT `id`,`name`,`district` FROM `city_api` ORDER BY `city_api`.`name` ASC";
+    database.query(sqlQuery, (err: any, data: any) => {
         if(err){
-            console.log(err)
-            console.log('entered into error')
-            res.send({
-                success: false,
-                statusCode: 500,
-                message: 'Getting error during the connection'
-            })
-            return;
+            throw err;
         }
-        console.log("the Id : "+ req.params.id);
+        res.send({
+            success: true,
+            statusCode: 200,
+            message: 'Success',
+            data: data
+        });
 
-        conn.query("SELECT * FROM `city_api` WHERE id=?", [req.params.id], (err: any, rows: any) => {
-            if(err){
-                conn.release();
-                res.send({
-                    success: false,
-                    statusCode: 400
-                });
-            }
-            res.send({
-                success: true,
-                statusCode: 200,
-                message: 'Success',
-                data: rows
-            });
-
-            conn.release();
-        })
     })
     
 })
 
-app.post('/Id/:id/Name/:name', (req: Request, res: Response) => {
+app.get('/test', (req: Request, res: Response) => {
+
     res.send({
-        data: req.body,
-        params : {
-            id: req.params.id,
-            name: req.params.name
+        success: true,
+        statusCode: 200,
+        message: 'Success',
+        data: {
+            name: 'Arun Jojo',
+            mobile: "919400247717",
+            occupation: "React Developer",
+            location: "Kasaragod"
         }
     });
+    
 })
 
-app.listen(3000, () => {
-    console.log('The application is listening on port 3000!');
+app.listen(3006, () => {
+    console.log('The application is listening on port 3006!');
 })

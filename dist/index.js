@@ -4,52 +4,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const db_1 = require("./db");
+const database = require('./config/db');
 const app = (0, express_1.default)();
 app.use(express_1.default.urlencoded({
     extended: false
 }));
 app.use(express_1.default.json());
-app.get('/orders/:id', (req, res) => {
-    db_1.pool.getConnection((err, conn) => {
+app.get('/get_cities', (req, res) => {
+    var sqlQuery = "SELECT `id`,`name`,`district` FROM `city_api` ORDER BY `city_api`.`name` ASC";
+    database.query(sqlQuery, (err, data) => {
         if (err) {
-            console.log(err);
-            console.log('entered into error');
-            res.send({
-                success: false,
-                statusCode: 500,
-                message: 'Getting error during the connection'
-            });
-            return;
+            throw err;
         }
-        console.log("the Id : " + req.params.id);
-        conn.query("SELECT * FROM `orders` WHERE id=?", [req.params.id], (err, rows) => {
-            if (err) {
-                conn.release();
-                res.send({
-                    success: false,
-                    statusCode: 400
-                });
-            }
-            res.send({
-                success: true,
-                statusCode: 200,
-                message: 'Success',
-                data: rows
-            });
-            conn.release();
+        res.send({
+            success: true,
+            statusCode: 200,
+            message: 'Success',
+            data: data
         });
     });
 });
-app.post('/Id/:id/Name/:name', (req, res) => {
+app.get('/test', (req, res) => {
     res.send({
-        data: req.body,
-        params: {
-            id: req.params.id,
-            name: req.params.name
+        success: true,
+        statusCode: 200,
+        message: 'Success',
+        data: {
+            name: 'Arun Jojo',
+            mobile: "919400247717",
+            occupation: "React Developer",
+            location: "Kasaragod"
         }
     });
 });
-app.listen(3000, () => {
-    console.log('The application is listening on port 3000!');
+app.listen(3006, () => {
+    console.log('The application is listening on port 3006!');
 });
