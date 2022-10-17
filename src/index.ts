@@ -1,7 +1,7 @@
-import express from 'express';
+import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 
-const app = express();
+const app: Application = express();
 
 app.use(bodyParser.urlencoded({
     extended: false
@@ -9,13 +9,21 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
+app.get('/Id/:id/Name/:name', (req: Request, res: Response) => {
+    res.send({
+        message: 'Hello World',
+        id: req.params.id,
+        name: req.params.name
+    });
 })
 
-app.post('/', (req, res) => {
+app.post('/Id/:id/Name/:name', (req: Request, res: Response) => {
     res.send({
-        data: req.body
+        data: req.body,
+        params : {
+            id: req.params.id,
+            name: req.params.name
+        }
     });
 })
 

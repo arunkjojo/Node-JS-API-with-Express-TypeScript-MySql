@@ -10,12 +10,20 @@ app.use(body_parser_1.default.urlencoded({
     extended: false
 }));
 app.use(body_parser_1.default.json());
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
-app.post('/', (req, res) => {
+app.get('/Id/:id/Name/:name', (req, res) => {
     res.send({
-        data: req.body
+        message: 'Hello World',
+        id: req.params.id,
+        name: req.params.name
+    });
+});
+app.post('/Id/:id/Name/:name', (req, res) => {
+    res.send({
+        data: req.body,
+        params: {
+            id: req.params.id,
+            name: req.params.name
+        }
     });
 });
 app.listen(3000, () => {
